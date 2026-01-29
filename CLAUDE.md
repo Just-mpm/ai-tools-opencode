@@ -1,10 +1,22 @@
 # tools-open-code
 
-Coleção de tools para OpenCode AI.
+Coleção de tools e plugins para OpenCode AI.
 
-## Tools disponíveis
+## Estrutura
 
-### `analyze.ts` - Análise de Dependências e Impacto
+```
+tools/
+  analyze.ts           # Tool de análise de dependências
+
+plugins/
+  analyze-context.ts   # Plugin de contexto automático
+```
+
+---
+
+## Tools
+
+### `tools/analyze.ts` - Análise de Dependências e Impacto
 
 Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências e código morto.
 
@@ -20,34 +32,71 @@ Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências e
 
 **Stack interna:** Skott + Knip
 
-## Estrutura
+---
 
-```
-analyze.ts    # Tool de análise de dependências
-```
+## Plugins
+
+### `plugins/analyze-context.ts` - Contexto Automático do Projeto
+
+Plugin que injeta automaticamente a estrutura do projeto no system prompt quando a sessão inicia.
+
+**Funcionalidades:**
+- Carrega o cache do `@justmpm/ai-tool` (pasta `.analyze/`) se disponível
+- Exibe mapa completo de arquivos organizados por pasta e categoria
+- Detecta dependências circulares e avisa no contexto
+- Verifica se o cache está desatualizado comparando hash dos arquivos
+- Ignora projetos sem `package.json` ou `tsconfig.json`
+
+**Categorias detectadas:**
+- 📄 page | 🖼️ layout | 🛣️ route | 🧩 component
+- 🪝 hook | ⚙️ service | 🗄️ store | 🔧 util
+- 📝 type | ⚙️ config | 🧪 test | 📁 other
+
+**Como funciona:**
+1. Ao iniciar sessão, verifica se existe cache em `.analyze/`
+2. Se existir, formata e injeta no system prompt via hook `experimental.chat.system.transform`
+3. Se não existir, sugere rodar `analyze map` para gerar
+
+---
 
 ## Instalação
 
-Copie a tool desejada para a pasta de tools do OpenCode:
+### Tools
+
+Copie para a pasta de tools do OpenCode:
 
 ```bash
 # Windows
-~\.config\opencode\tools\
+cp tools/analyze.ts ~/.config/opencode/tools/
 
 # Linux/Mac
-~/.config/opencode/tools/
+cp tools/analyze.ts ~/.config/opencode/tools/
 ```
 
-Exemplo:
+### Plugins
+
+Copie para a pasta de plugins do OpenCode:
+
 ```bash
-# Copiar analyze.ts
-cp analyze.ts ~/.config/opencode/tools/
+# Windows
+cp plugins/analyze-context.ts ~/.config/opencode/plugins/
+
+# Linux/Mac
+cp plugins/analyze-context.ts ~/.config/opencode/plugins/
 ```
 
-A tool estará disponível automaticamente na próxima sessão.
+Tools e plugins estarão disponíveis automaticamente na próxima sessão.
 
-## Como adicionar novas tools
+---
 
-1. Criar arquivo `.ts` na raiz
+## Como contribuir
+
+### Adicionar nova tool
+1. Criar arquivo `.ts` em `tools/`
 2. Usar `@opencode-ai/plugin` para definir a tool
+3. Documentar neste CLAUDE.md
+
+### Adicionar novo plugin
+1. Criar arquivo `.ts` em `plugins/`
+2. Exportar um `Plugin` seguindo a API do OpenCode
 3. Documentar neste CLAUDE.md

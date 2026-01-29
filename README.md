@@ -1,69 +1,86 @@
 # tools-open-code
 
-Coleção de tools para [OpenCode AI](https://opencode.ai).
+Coleção de tools e plugins para [OpenCode AI](https://opencode.ai).
 
-## Propósito
+## O que tem aqui?
 
-Este repositório contém tools personalizadas que estendem as capacidades do OpenCode AI. Cada tool é um arquivo TypeScript standalone que pode ser usado diretamente.
+| Tipo | Nome | Descrição |
+|------|------|-----------|
+| Tool | `analyze` | Análise de dependências e impacto usando Skott + Knip |
+| Plugin | `analyze-context` | Injeta estrutura do projeto no contexto automaticamente |
 
-## Tools Disponíveis
+## Instalação Rápida
 
-### analyze.ts
+```bash
+# Clonar o repositório
+git clone https://github.com/mthspimenta/tools-open-code.git
+cd tools-open-code
 
-Ferramenta de análise de dependências e impacto para projetos TypeScript/JavaScript.
+# Copiar tool
+cp tools/analyze.ts ~/.config/opencode/tools/
 
-**Comandos:**
+# Copiar plugin
+cp plugins/analyze-context.ts ~/.config/opencode/plugins/
+```
+
+Reinicie o OpenCode para carregar.
+
+## Tools
+
+### analyze
+
+Analisa dependências e código morto do projeto. Usa `@justmpm/ai-tool` internamente.
 
 | Comando | Descrição | Uso |
 |---------|-----------|-----|
-| `map` | Gera mapa do projeto com categorização de arquivos | Início de sessão, entender estrutura |
-| `dead` | Detecta arquivos órfãos e código não utilizado | Limpeza, refatoração geral |
+| `map` | Gera mapa do projeto com categorização | Início de sessão |
+| `dead` | Detecta arquivos órfãos e código morto | Limpeza de projeto |
 | `impact` | Analisa upstream/downstream de um arquivo | **ANTES** de modificar código compartilhado |
 
 **Exemplos:**
 
 ```bash
-# Ver estrutura do projeto
-analyze map
-
-# Encontrar código morto
-analyze dead
-
-# Verificar impacto antes de refatorar
-analyze impact useAuth
-analyze impact src/components/Button.tsx
+analyze map                    # Mapa do projeto
+analyze dead                   # Encontra código não utilizado
+analyze impact useAuth         # Quem usa esse hook?
+analyze impact Button.tsx      # Impacto de modificar componente
 ```
 
 **Opções:**
 - `format`: `text` (padrão) ou `json`
-- `target`: Arquivo para análise de impacto (aceita nome parcial ou caminho completo)
+- `target`: Arquivo para análise (aceita nome parcial ou caminho completo)
 
-**Stack interna:** Usa [Skott](https://github.com/antoine-coulon/skott) + [Knip](https://knip.dev) via pacote `@justmpm/ai-tool`.
+## Plugins
 
-## Instalação
+### analyze-context
 
-Copie a tool desejada para a pasta de tools do OpenCode:
+Carrega automaticamente a estrutura do projeto no system prompt quando a sessão inicia.
 
-```bash
-# Windows
-~\.config\opencode\tools\
+**Funcionalidades:**
+- Usa cache em `.analyze/` gerado pelo `analyze map`
+- Detecta quando cache está desatualizado
+- Mostra dependências circulares como warning
+- Organiza arquivos por pasta e categoria com ícones
 
-# Linux/Mac
-~/.config/opencode/tools/
+**Categorias detectadas:**
+- 📄 page | 🖼️ layout | 🛣️ route | 🧩 component
+- 🪝 hook | ⚙️ service | 🗄️ store | 🔧 util
+- 📝 type | ⚙️ config | 🧪 test | 📁 other
+
+## Estrutura do Repositório
+
 ```
+tools/
+  analyze.ts           # Tool de análise de dependências
 
-Exemplo:
-```bash
-# Copiar analyze.ts
-cp analyze.ts ~/.config/opencode/tools/
+plugins/
+  analyze-context.ts   # Plugin de contexto automático
 ```
-
-A tool estará disponível automaticamente na próxima sessão do OpenCode.
 
 ## Requisitos
 
+- [OpenCode AI](https://opencode.ai)
 - Node.js >= 18.0.0
-- Projeto TypeScript/JavaScript (para analyze.ts)
 
 ## Licença
 
