@@ -2,6 +2,19 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas aqui.
 
+## [0.3.0] - 2025-01-30
+
+### Adicionado
+- **Novos comandos na tool `analyze`**:
+  - `suggest <target>` - Lista arquivos recomendados para ler ANTES de editar um arquivo
+  - `context <target>` - Extrai assinaturas de funções/tipos SEM implementação (útil para entender APIs)
+- **Novo parâmetro `limit`**: Controla quantidade de sugestões no comando `suggest`
+
+### Alterado
+- **Descrição da tool reescrita**: Separação clara entre comandos que precisam de `target` e os que não precisam
+- **Parâmetro `target` agora é obrigatório** para `suggest`, `context` e `impact`
+- **Exemplos de uso melhorados** na descrição da tool
+
 ## [0.2.0] - 2025-01-29
 
 ### Adicionado
