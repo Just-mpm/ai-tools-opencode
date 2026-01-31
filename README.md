@@ -37,9 +37,9 @@ Analisa dependências, código morto e áreas funcionais do projeto. Usa `@justm
 
 | Comando | Descrição | Uso |
 |---------|-----------|-----|
-| `map` | Gera mapa do projeto (categorias técnicas) | Ver estrutura técnica |
+| `map` | Resumo compacto: contagens, áreas, alertas | Início de sessão |
 | `dead` | Detecta arquivos órfãos e código morto | Limpeza de projeto |
-| `areas` | Lista áreas/domínios funcionais | Início de sessão |
+| `areas` | Lista áreas/domínios funcionais | Ver domínios |
 | `areas-init` | Gera config para áreas manuais | Configurar áreas |
 
 **Comandos com arquivo (target obrigatório):**
@@ -55,7 +55,7 @@ Analisa dependências, código morto e áreas funcionais do projeto. Usa `@justm
 
 ```bash
 # Sem arquivo
-analyze map                    # Mapa do projeto (categorias)
+analyze map                    # Resumo compacto (contagens + áreas + alertas)
 analyze areas                  # Lista áreas funcionais
 analyze dead                   # Encontra código morto
 analyze areas-init             # Gera .analyze/areas.config.json

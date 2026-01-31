@@ -1,53 +1,56 @@
 # tools-open-code
 
-Coleção de tools para OpenCode AI.
+Coleção de tools e plugins para OpenCode AI.
 
 ## Tools disponíveis
 
-### `analyze.ts` - Análise de Dependências e Impacto
+### `analyze.ts` - Análise de Dependências, Impacto e Áreas
 
-Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências e código morto.
+Wrapper para `@justmpm/ai-tool` que fornece análise de dependências, código morto e navegação por domínios funcionais.
 
-**Comandos:**
-- `map` - Mapa do projeto com categorização de arquivos
-- `dead` - Detecta arquivos órfãos e código não utilizado
-- `impact <arquivo>` - Analisa quem usa/depende de um arquivo antes de modificá-lo
+**Comandos sem arquivo:**
+- `map` - Resumo compacto: contagens, áreas, alertas (otimizado para tokens)
+- `dead` - Detecta arquivos órfãos e código morto
+- `areas` - Lista áreas/domínios funcionais
+- `areas-init` - Gera config de áreas
+
+**Comandos com arquivo (target obrigatório):**
+- `suggest <arquivo>` - O que ler antes de modificar
+- `context <arquivo>` - Assinaturas sem implementação
+- `impact <arquivo>` - Upstream/downstream
+- `area <nome>` - Arquivos de uma área
 
 **Quando usar:**
+- `map` no início da sessão para resumo rápido
+- `suggest` ANTES de modificar para saber o que ler
 - `impact` ANTES de refatorar hooks, utils, services compartilhados
 - `dead` quando pedirem limpeza de código
-- `map` no início da sessão para contexto
 
-**Stack interna:** Skott + Knip
+### `commands.ts` - Invocar Slash Commands
+
+Permite ao modelo executar slash commands proativamente.
+
+## Plugins
+
+### `analyze-context.ts` - Contexto Automático
+
+Injeta estrutura do projeto no system prompt automaticamente.
 
 ## Estrutura
 
 ```
-analyze.ts    # Tool de análise de dependências
+tools/
+  analyze.ts           # Análise de dependências e áreas
+  commands.ts          # Invocar slash commands
+
+plugins/
+  analyze-context.ts   # Contexto automático
 ```
 
 ## Instalação
 
-Copie a tool desejada para a pasta de tools do OpenCode:
-
 ```bash
-# Windows
-~\.config\opencode\tools\
-
-# Linux/Mac
-~/.config/opencode/tools/
+cp tools/analyze.ts ~/.config/opencode/tools/
+cp tools/commands.ts ~/.config/opencode/tools/
+cp plugins/analyze-context.ts ~/.config/opencode/plugins/
 ```
-
-Exemplo:
-```bash
-# Copiar analyze.ts
-cp analyze.ts ~/.config/opencode/tools/
-```
-
-A tool estará disponível automaticamente na próxima sessão.
-
-## Como adicionar novas tools
-
-1. Criar arquivo `.ts` na raiz
-2. Usar `@opencode-ai/plugin` para definir a tool
-3. Documentar neste CLAUDE.md

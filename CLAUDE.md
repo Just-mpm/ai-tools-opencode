@@ -22,7 +22,7 @@ plugins/
 Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências, código morto e navegação por domínios funcionais.
 
 **Comandos sem arquivo (rodam sozinhos):**
-- `map` - Mapa do projeto com categorização de arquivos (categorias técnicas)
+- `map` - Resumo compacto: contagens por categoria, áreas detectadas, alertas (otimizado para tokens)
 - `dead` - Detecta arquivos órfãos e código não utilizado
 - `areas` - Lista todas as áreas/domínios funcionais do projeto
 - `areas-init` - Gera `.analyze/areas.config.json` para configurar áreas manualmente
@@ -38,12 +38,12 @@ Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências, 
 - ÁREA = domínio funcional (auth, meus-pets, stripe, dashboard...) → use `areas`
 
 **Quando usar:**
-- `areas` no início da sessão para entender domínios funcionais
+- `map` no início da sessão para resumo rápido (contagens + áreas + alertas)
+- `areas` para entender domínios funcionais detalhados
 - `area auth` quando for trabalhar em autenticação
 - `suggest` ANTES de modificar para saber o que ler primeiro
 - `impact` ANTES de refatorar hooks, utils, services compartilhados
 - `dead` quando pedirem limpeza de código
-- `map` para ver estrutura técnica do projeto
 
 **Stack interna:** Skott + Knip + ts-morph
 

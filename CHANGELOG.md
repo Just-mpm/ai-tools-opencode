@@ -2,6 +2,15 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas aqui.
 
+## [0.5.0] - 2025-01-31
+
+### Alterado
+- **Tool `analyze`**: Atualizada para usar `@justmpm/ai-tool@0.5.0`
+  - Comando `map` agora retorna resumo compacto por padrão (otimizado para tokens)
+  - Resumo inclui: contagens por categoria, áreas detectadas, alertas contextuais
+  - Removida opção `full` do map na tool (LLM sempre recebe resumo)
+  - Dicas de próximos passos guiam o modelo a usar as outras tools
+
 ## [0.4.0] - 2025-01-31
 
 ### Adicionado

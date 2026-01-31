@@ -24,7 +24,7 @@ Analisa dependências, impacto e áreas funcionais do projeto.
 COMANDOS SEM ARQUIVO (rodam sozinhos):
 ═══════════════════════════════════════════════════════════════
 
-• map → Visão geral do projeto (categorias técnicas).
+• map → Resumo compacto: contagens, áreas, alertas (otimizado p/ tokens).
 • dead → Encontra código morto/arquivos órfãos.
 • areas → Lista todas as áreas/domínios funcionais.
 • areas-init → Gera .analyze/areas.config.json para configurar áreas.
@@ -58,8 +58,7 @@ EXEMPLOS DE USO:
 ═══════════════════════════════════════════════════════════════
 
 Início de sessão:
-  command="areas"              → Ver domínios do projeto
-  command="map"                → Ver estrutura técnica
+  command="map"                → Resumo com contagens + áreas + alertas
 
 Entender uma feature:
   command="area", target="auth"           → Todos arquivos de auth
@@ -149,7 +148,7 @@ export default tool({
     const format = args.format || "text";
 
     try {
-      let cmd = `npx --yes @justmpm/ai-tool@latest`;
+      let cmd = `ai-tool`;
 
       // Montar comando baseado no tipo
       switch (args.command) {
