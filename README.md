@@ -6,7 +6,7 @@ Coleção de tools e plugins para [OpenCode AI](https://opencode.ai).
 
 | Tipo | Nome | Descrição |
 |------|------|-----------|
-| Tool | `analyze` | Análise de dependências e impacto usando Skott + Knip |
+| Tool | `analyze` | Análise de dependências, impacto e áreas funcionais usando Skott + Knip + ts-morph |
 | Plugin | `analyze-context` | Injeta estrutura do projeto no contexto automaticamente |
 
 ## Instalação Rápida
@@ -29,26 +29,53 @@ Reinicie o OpenCode para carregar.
 
 ### analyze
 
-Analisa dependências e código morto do projeto. Usa `@justmpm/ai-tool` internamente.
+Analisa dependências, código morto e áreas funcionais do projeto. Usa `@justmpm/ai-tool` internamente.
+
+**Comandos sem arquivo:**
 
 | Comando | Descrição | Uso |
 |---------|-----------|-----|
-| `map` | Gera mapa do projeto com categorização | Início de sessão |
+| `map` | Gera mapa do projeto (categorias técnicas) | Ver estrutura técnica |
 | `dead` | Detecta arquivos órfãos e código morto | Limpeza de projeto |
-| `impact` | Analisa upstream/downstream de um arquivo | **ANTES** de modificar código compartilhado |
+| `areas` | Lista áreas/domínios funcionais | Início de sessão |
+| `areas-init` | Gera config para áreas manuais | Configurar áreas |
+
+**Comandos com arquivo (target obrigatório):**
+
+| Comando | Descrição | Uso |
+|---------|-----------|-----|
+| `suggest <target>` | Sugere arquivos para ler | **ANTES** de modificar |
+| `context <target>` | Extrai assinaturas (sem implementação) | Entender API de um arquivo |
+| `impact <target>` | Analisa upstream/downstream | **ANTES** de refatorar |
+| `area <target>` | Mostra arquivos de uma área | Trabalhar em feature específica |
 
 **Exemplos:**
 
 ```bash
-analyze map                    # Mapa do projeto
-analyze dead                   # Encontra código não utilizado
+# Sem arquivo
+analyze map                    # Mapa do projeto (categorias)
+analyze areas                  # Lista áreas funcionais
+analyze dead                   # Encontra código morto
+analyze areas-init             # Gera .analyze/areas.config.json
+
+# Com arquivo
+analyze suggest useAuth        # O que ler antes de modificar
+analyze context useAuth        # Assinaturas do arquivo
 analyze impact useAuth         # Quem usa esse hook?
-analyze impact Button.tsx      # Impacto de modificar componente
+analyze area auth              # Todos arquivos de auth
+analyze area auth --type=hook  # Só hooks de auth
 ```
+
+**IMPORTANTE - Diferença:**
+- **CATEGORIA** = tipo técnico (hook, component, page) → use `map`
+- **ÁREA** = domínio funcional (auth, stripe, meus-pets) → use `areas`
 
 **Opções:**
 - `format`: `text` (padrão) ou `json`
-- `target`: Arquivo para análise (aceita nome parcial ou caminho completo)
+- `target`: Arquivo ou área (aceita nome parcial ou caminho completo)
+- `type`: Filtrar por categoria (para `area`)
+- `full`: Mostrar todos os arquivos (para `area`)
+- `limit`: Limite de sugestões (para `suggest`)
 
 ## Plugins
 
@@ -71,11 +98,32 @@ Carrega automaticamente a estrutura do projeto no system prompt quando a sessão
 
 ```
 tools/
-  analyze.ts           # Tool de análise de dependências
+  analyze.ts           # Tool de análise de dependências e áreas
 
 plugins/
   analyze-context.ts   # Plugin de contexto automático
 ```
+
+## Configuração Manual de Áreas
+
+O comando `areas-init` gera `.analyze/areas.config.json` para customizar detecção:
+
+```json
+{
+  "areas": {
+    "beta": {
+      "name": "Programa Beta",
+      "patterns": ["components/beta/**"],
+      "keywords": ["beta"]
+    }
+  },
+  "descriptions": {
+    "hooks/useAuth.ts": "Hook principal de autenticação"
+  }
+}
+```
+
+A detecção automática funciona para ~70-80%. O resto configura manualmente.
 
 ## Requisitos
 
