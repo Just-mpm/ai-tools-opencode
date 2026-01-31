@@ -7,6 +7,7 @@ Coleção de tools e plugins para OpenCode AI.
 ```
 tools/
   analyze.ts           # Tool de análise de dependências e áreas
+  commands.ts          # Tool para invocar slash commands proativamente
 
 plugins/
   analyze-context.ts   # Plugin de contexto automático
@@ -45,6 +46,36 @@ Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências, 
 - `map` para ver estrutura técnica do projeto
 
 **Stack interna:** Skott + Knip + ts-morph
+
+---
+
+### `tools/commands.ts` - Invocar Slash Commands Proativamente
+
+Permite ao modelo descobrir e executar slash commands do usuário sem que o usuário precise digitar `/comando`.
+
+**Como funciona:**
+- Na inicialização, lê todos os `.md` em `~/.config/opencode/command/` e `.opencode/command/`
+- Extrai frontmatter (description, argument-hint) de cada command
+- Gera descrição dinâmica listando todos os commands disponíveis
+- O modelo vê a lista e pode invocar qualquer command passando argumentos
+
+**Parâmetros:**
+- `command` - Nome do command a executar (ex: "audit", "fix", "scan")
+- `arguments` - Argumentos opcionais (substitui $ARGUMENTS no template)
+
+**Exemplo de uso pelo modelo:**
+```typescript
+commands({ command: "audit", arguments: "src/components --diff" })
+commands({ command: "fix", arguments: "1.md --critical" })
+commands({ command: "scan" })
+```
+
+**Quando usar:**
+- Quando a tarefa do usuário se encaixa em um command existente
+- Para automatizar fluxos sem o usuário precisar digitar `/`
+- Ideal para orquestração de tarefas complexas
+
+**Vantagem:** A lista de commands é gerada dinamicamente. Ao criar um novo `.md` em `command/`, ele aparece automaticamente na próxima sessão.
 
 ---
 

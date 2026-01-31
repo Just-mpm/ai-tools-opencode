@@ -2,6 +2,16 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas aqui.
 
+## [0.4.0] - 2025-01-31
+
+### Adicionado
+- **Nova tool `commands`**: Permite ao modelo invocar slash commands proativamente
+  - Lê dinamicamente todos os `.md` em `~/.config/opencode/command/` e `.opencode/command/`
+  - Extrai frontmatter (description, argument-hint) de cada command
+  - Gera descrição dinâmica listando todos commands disponíveis
+  - Modelo pode executar qualquer command passando argumentos
+  - Novos commands aparecem automaticamente na próxima sessão (sem hardcode)
+
 ## [0.3.0] - 2025-01-30
 
 ### Adicionado
