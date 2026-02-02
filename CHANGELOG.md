@@ -2,6 +2,33 @@
 
 Todas as mudanças notáveis neste projeto serão documentadas aqui.
 
+## [0.7.0] - 2026-02-02
+
+### Adicionado
+- **Nova tool `quest`**: Sistema de gerenciamento de quests para orquestração de trabalho
+  - Quests compartilhadas entre parent e subagents (encontra sessão raiz automaticamente)
+  - Comandos: `create`, `update`, `list`, `get`
+  - Sistema de bloqueios entre quests (blockedBy)
+  - Enforcement rígido: impede avançar status se houver bloqueadores pendentes
+  - Formato compacto para listas grandes (20+ quests)
+  - Context bridges: transferência de contexto entre grupos de trabalho
+  - Projetado para o sistema de Context Relay
+
+### Alterado
+- **Tool `analyze`**: Atualizada para usar `@justmpm/ai-tool@0.7.0`
+  - Novo comando `find` - busca símbolos no código (definição + referências)
+    - Entende AST do TypeScript (diferente de grep)
+    - Filtros: `symbolType` (function, type, const, component, hook, trigger)
+    - Opções: `defOnly` (só definições), `refsOnly` (só usos), `areaName` (filtrar por área)
+  - Novo comando `functions` - lista Cloud Functions Firebase
+    - Agrupa por tipo de trigger (onCall, onDocumentCreated, onSchedule, etc)
+    - Filtrável por trigger específico
+    - Suporta 40+ tipos de triggers
+  - Comando `context` agora aceita `areaName` para contexto consolidado de área inteira
+  - Sanitização de argumentos para evitar injeção de comandos
+  - Tratamento de erros melhorado (timeout, comando não encontrado, buffer excedido)
+  - Timeout reduzido de 3 para 2 minutos
+
 ## [0.5.0] - 2025-01-31
 
 ### Alterado

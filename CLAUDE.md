@@ -6,7 +6,8 @@ Coleção de tools e plugins para OpenCode AI.
 
 ```
 tools/
-  analyze.ts           # Tool de análise de dependências e áreas
+  analyze.ts           # Tool de análise de dependências, áreas e Cloud Functions
+  quest.ts             # Sistema de quests para orquestração (Context Relay)
   commands.ts          # Tool para invocar slash commands proativamente
 
 plugins/
@@ -26,12 +27,15 @@ Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências, 
 - `dead` - Detecta arquivos órfãos e código não utilizado
 - `areas` - Lista todas as áreas/domínios funcionais do projeto
 - `areas-init` - Gera `.analyze/areas.config.json` para configurar áreas manualmente
+- `functions` - Lista Cloud Functions Firebase (agrupadas por trigger)
 
 **Comandos com arquivo (OBRIGATÓRIO passar target):**
 - `suggest <arquivo>` - Sugere arquivos para ler ANTES de modificar
 - `context <arquivo>` - Extrai assinaturas de funções/tipos (sem implementação)
+- `context --areaName=<area>` - Contexto consolidado de toda uma área
 - `impact <arquivo>` - Analisa upstream/downstream de um arquivo
 - `area <nome>` - Mostra arquivos de uma área específica
+- `find <símbolo>` - Busca símbolos no código (definição + usos)
 
 **IMPORTANTE - Diferença entre CATEGORIAS e ÁREAS:**
 - CATEGORIA = tipo técnico (hook, component, page, service...) → use `map`
@@ -44,6 +48,8 @@ Wrapper para o pacote `@justmpm/ai-tool` que fornece análise de dependências, 
 - `suggest` ANTES de modificar para saber o que ler primeiro
 - `impact` ANTES de refatorar hooks, utils, services compartilhados
 - `dead` quando pedirem limpeza de código
+- `find` para localizar onde um símbolo é definido e usado
+- `functions` para listar Cloud Functions Firebase do projeto
 
 **Stack interna:** Skott + Knip + ts-morph
 
@@ -76,6 +82,62 @@ commands({ command: "scan" })
 - Ideal para orquestração de tarefas complexas
 
 **Vantagem:** A lista de commands é gerada dinamicamente. Ao criar um novo `.md` em `command/`, ele aparece automaticamente na próxima sessão.
+
+---
+
+### `tools/quest.ts` - Sistema de Quests para Orquestração
+
+Sistema de gerenciamento de quests para orquestração de trabalho. Projetado para o sistema de Context Relay.
+
+**Características principais:**
+- Quests compartilhadas entre parent e subagents (encontra sessão raiz automaticamente)
+- Sistema de bloqueios entre quests (blockedBy)
+- Enforcement rígido: impede avançar status se bloqueadores pendentes
+- Context bridges para transferir contexto entre grupos de trabalho
+
+**Comandos:**
+- `create` - Cria nova quest com subject e description
+- `update` - Atualiza status, description ou bloqueios
+- `list` - Lista todas as quests (ou só disponíveis com `available=true`)
+- `get` - Retorna detalhes completos de uma quest
+
+**Parâmetros principais:**
+- `subject` - Título da quest (obrigatório para create)
+- `description` - Descrição completa (obrigatório para create)
+- `activeForm` - Gerúndio para exibição, ex: "Implementando login"
+- `id` - ID da quest (obrigatório para update/get)
+- `status` - "pending" | "in_progress" | "completed"
+- `addBlockedBy` / `removeBlockedBy` - Gerenciar bloqueios
+- `available` - Lista só quests disponíveis (pending + sem bloqueios)
+- `compact` - Lista ultra-compacta (ideal para 20+ quests)
+
+**Workflow típico (Sistema Relay):**
+
+```typescript
+// 1. Criar quests com descrições ricas
+quest({ command: "create", subject: "[Grupo 1.1] Implementar login", description: "## Objetivo..." })
+
+// 2. Configurar bloqueios após criar todas
+quest({ command: "update", id: "quest-004", addBlockedBy: ["quest-001", "quest-002"] })
+
+// 3. Ver quests disponíveis
+quest({ command: "list", available: true })
+
+// 4. Iniciar trabalho (retorna contexto completo)
+quest({ command: "update", id: "quest-001", status: "in_progress" })
+
+// 5. Completar (desbloqueia quests dependentes automaticamente)
+quest({ command: "update", id: "quest-001", status: "completed" })
+
+// 6. Context bridge (transferir contexto para próximo grupo)
+quest({ command: "update", id: "quest-005", newDescription: "## Contexto do Grupo 1\n..." })
+```
+
+**Quando usar:**
+- Tarefas multi-step complexas (3+ etapas)
+- Orquestração de grupos com context bridges
+- Rastrear progresso em implementações longas
+- Preservar contexto entre agents
 
 ---
 
